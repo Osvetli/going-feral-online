@@ -1,0 +1,21 @@
+[build]
+  base = "/"
+  command = "npm install && cd server && npm install && npx prisma generate && npx tsc && cd ../client && npm install && npm run build"
+  publish = "client/dist"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "none"
+
+[functions.api]
+  included_files = ["server/dist/**", "server/node_modules/**", "server/prisma/schema.prisma"]
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

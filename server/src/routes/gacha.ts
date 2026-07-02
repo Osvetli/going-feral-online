@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { prisma } from '../index';
+import { prisma } from '../app';
 import { drawCard, saveUserCard } from '../utils/gachaLogic';
 
 const router = Router();

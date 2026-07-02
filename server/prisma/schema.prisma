@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
 }
 
 model User {
@@ -17,23 +18,23 @@ model User {
 }
 
 model Run {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  mode      String   // "workplace" | "academic"
-  inputType String   // "text" | "draw"
-  content   String   // text content or drawing base64
-  drawLabel String?  // drawing label
-  createdAt DateTime @default(now())
-  resultCard String? // drawn card ID
-  userCards UserCard[]
+  id         String     @id @default(uuid())
+  userId     String
+  user       User       @relation(fields: [userId], references: [id])
+  mode       String
+  inputType  String
+  content    String
+  drawLabel  String?
+  createdAt  DateTime   @default(now())
+  resultCard String?
+  userCards  UserCard[]
 }
 
 model Card {
   id          String     @id @default(uuid())
   name        String
-  rarity      String     // "SSR" | "SR" | "R" | "N"
-  mode        String     // "workplace" | "academic"
+  rarity      String
+  mode        String
   description String
   emoji       String
   imageData   String?

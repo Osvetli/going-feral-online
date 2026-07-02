@@ -1,14 +1,14 @@
 {
-  "name": "crazy-merit-server",
+  "name": "going-feral-online",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "db:migrate": "prisma migrate dev --name init",
-    "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build:client": "cd client && npm install && npm run build",
+    "db:push": "cd server && npx prisma db push",
+    "db:seed": "cd server && npx tsx prisma/seed.ts",
+    "postinstall": "cd server && npm install"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

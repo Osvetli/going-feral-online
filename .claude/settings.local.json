@@ -10,7 +10,22 @@
       "Bash(cat .gitignore)",
       "Bash(cat client/.gitignore)",
       "Bash(cat server/.gitignore)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git config *)",
+      "Bash(git branch *)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(npx tsx *)",
+      "Bash(PORT=3002 timeout 4 npx tsx src/index.ts)",
+      "Bash(curl *)",
+      "Bash(npm i *)",
+      "Bash(vercel login *)",
+      "Bash(netlify deploy *)",
+      "Bash(netlify login *)",
+      "Bash(dir \"%USERPROFILE%\\\\.netlify\")",
+      "Bash(dir \"%USERPROFILE%\\\\AppData\\\\Roaming\\\\netlify\")",
+      "Read(//f/crazy-project/server/%USERPROFILE%/.netlify/**)"
     ]
   }
 }
