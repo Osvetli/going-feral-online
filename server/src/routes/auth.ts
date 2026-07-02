@@ -34,9 +34,14 @@ router.post('/register', async (req: Request, res: Response) => {
     });
 
     res.json({ id: user.id, nickname: user.nickname, createdAt: user.createdAt });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Register error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({
+      error: 'Internal server error',
+      detail: error?.message || String(error),
+      code: error?.code,
+      dbUrl: process.env.DATABASE_URL ? 'set' : 'MISSING',
+    });
   }
 });
 
@@ -69,9 +74,13 @@ router.post('/login', async (req: Request, res: Response) => {
     }
 
     res.json({ id: user.id, nickname: user.nickname, createdAt: user.createdAt });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Login error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({
+      error: 'Internal server error',
+      detail: error?.message || String(error),
+      dbUrl: process.env.DATABASE_URL ? 'set' : 'MISSING',
+    });
   }
 });
 
