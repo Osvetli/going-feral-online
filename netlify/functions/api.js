@@ -1,4 +1,5 @@
-const serverless = require('serverless-http');
+// serverless-http is installed in server/node_modules (included in deploy)
+const serverless = require('../../server/node_modules/serverless-http');
 const path = require('path');
 
 // Ensure Prisma finds the schema
