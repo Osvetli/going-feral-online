@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(npx vite *)",
+      "Bash(npm install *)",
+      "Bash(rm -rf node_modules/.prisma)",
+      "Bash(npx prisma *)",
+      "Bash(timeout 3 npx tsx src/index.ts)",
+      "Bash(cat .gitignore)",
+      "Bash(cat client/.gitignore)",
+      "Bash(cat server/.gitignore)",
+      "Bash(git add *)"
+    ]
+  }
+}

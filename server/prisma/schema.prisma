@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String     @id @default(uuid())
+  nickname  String     @unique
+  password  String?
+  createdAt DateTime   @default(now())
+  runs      Run[]
+  cards     UserCard[]
+}
+
+model Run {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  mode      String   // "workplace" | "academic"
+  inputType String   // "text" | "draw"
+  content   String   // text content or drawing base64
+  drawLabel String?  // drawing label
+  createdAt DateTime @default(now())
+  resultCard String? // drawn card ID
+  userCards UserCard[]
+}
+
+model Card {
+  id          String     @id @default(uuid())
+  name        String
+  rarity      String     // "SSR" | "SR" | "R" | "N"
+  mode        String     // "workplace" | "academic"
+  description String
+  emoji       String
+  imageData   String?
+  userCards   UserCard[]
+}
+
+model UserCard {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  cardId    String
+  card      Card     @relation(fields: [cardId], references: [id])
+  runId     String?
+  run       Run?     @relation(fields: [runId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Share {
+  id        String   @id @default(uuid())
+  userId    String
+  runId     String
+  createdAt DateTime @default(now())
+}
