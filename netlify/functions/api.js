@@ -1,29 +1,47 @@
 const serverless = require('serverless-http');
 const path = require('path');
 
-// Point Prisma to the correct schema and engine location
+// Ensure Prisma finds the schema
 process.env.PRISMA_SCHEMA_PATH = path.resolve(__dirname, '../../server/prisma/schema.prisma');
 
-let handler = null;
-function getHandler() {
-  if (!handler) {
-    // Load the compiled Express app from server/dist
-    const app = require('../../server/dist/app').default;
-    handler = serverless(app, { binary: ['image/*', 'application/octet-stream'] });
-  }
-  return handler;
+let cached = null;
+
+async function loadApp() {
+  if (cached) return cached;
+
+  // Add debug: log whether DATABASE_URL is set (mask password)
+  const dbUrl = process.env.DATABASE_URL || '';
+  console.log('[api] DATABASE_URL present:', !!dbUrl, 'prefix:', dbUrl.slice(0, 40));
+
+  const app = require('../../server/dist/app').default;
+  const prisma = require('../../server/dist/app').prisma;
+
+  // Add quick diagnostic route
+  app.get('/api/debug', async (_req, res) => {
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+      const userCount = await prisma.user.count();
+      const cardCount = await prisma.card.count();
+      res.json({ ok: true, db: 'connected', users: userCount, cards: cardCount });
+    } catch (e) {
+      res.json({ ok: false, db: 'disconnected', error: e.message });
+    }
+  });
+
+  cached = serverless(app, { binary: ['image/*'] });
+  return cached;
 }
 
 exports.handler = async (event, context) => {
   try {
-    const h = getHandler();
-    return await h(event, context);
+    const handler = await loadApp();
+    return await handler(event, context);
   } catch (err) {
-    console.error('API error:', err);
+    console.error('[api] Fatal error:', err.message, err.stack);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Internal server error' }),
-      headers: { 'Content-Type': 'application/json' }
+      body: JSON.stringify({ error: 'Internal server error', detail: err.message }),
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
     };
   }
 };
