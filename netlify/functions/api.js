@@ -1,8 +1,8 @@
-// serverless-http is installed in server/node_modules (included in deploy)
-const serverless = require('../../server/node_modules/serverless-http');
+// With esbuild bundler, dependencies are auto-resolved
+const serverless = require('serverless-http');
 const path = require('path');
 
-// Ensure Prisma finds the schema
+// Ensure Prisma finds the schema at runtime
 process.env.PRISMA_SCHEMA_PATH = path.resolve(__dirname, '../../server/prisma/schema.prisma');
 
 let cached = null;
@@ -10,14 +10,10 @@ let cached = null;
 async function loadApp() {
   if (cached) return cached;
 
-  // Add debug: log whether DATABASE_URL is set (mask password)
-  const dbUrl = process.env.DATABASE_URL || '';
-  console.log('[api] DATABASE_URL present:', !!dbUrl, 'prefix:', dbUrl.slice(0, 40));
-
   const app = require('../../server/dist/app').default;
-  const prisma = require('../../server/dist/app').prisma;
+  const { prisma } = require('../../server/dist/app');
 
-  // Add quick diagnostic route
+  // Diagnostic route
   app.get('/api/debug', async (_req, res) => {
     try {
       await prisma.$queryRaw`SELECT 1`;
@@ -38,7 +34,7 @@ exports.handler = async (event, context) => {
     const handler = await loadApp();
     return await handler(event, context);
   } catch (err) {
-    console.error('[api] Fatal error:', err.message, err.stack);
+    console.error('[api] Fatal:', err.message);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Internal server error', detail: err.message }),

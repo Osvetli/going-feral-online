@@ -5,10 +5,11 @@
   functions = "netlify/functions"
 
 [functions]
-  node_bundler = "none"
+  node_bundler = "esbuild"
+  external_node_modules = ["@prisma/client", ".prisma"]
 
 [functions.api]
-  included_files = ["server/dist/**", "server/node_modules/**", "server/prisma/schema.prisma"]
+  included_files = ["server/dist/**", "server/node_modules/@prisma/**", "server/node_modules/.prisma/**", "server/prisma/schema.prisma"]
 
 [[redirects]]
   from = "/api/*"
